@@ -1,0 +1,52 @@
+#!/bin/sh
+# Copyright (C) 2015  Roman Zimbelmann <hut@hut.pm>
+# This software is distributed under the terms of the GNU GPL version 3.
+
+usage () {
+    echo "usage: kbind <key>=<action>..."
+}
+
+kbind_base () {
+    # Change the terminal environment
+    local stty_orig=`stty -g`
+    stty -echo
+    local save_traps="$(trap)"
+
+    on_exit () {
+        # Restore the terminal
+        stty $stty_orig
+
+        # Restore signal handlers
+        eval "$save_traps"
+    }
+
+    # Get a single character that's typed in by the user
+    getc () {
+        stty raw
+        dd bs=1 count=1 2>/dev/null
+        stty cooked
+    }
+
+    # Print the key bindings
+    for var in "$@"; do
+        echo $var
+    done
+
+    while true; do
+        input="$(getc)"
+
+        if [ "$input" == "q" ]; then
+            break
+        fi
+
+        for var in "$@"; do
+            if [ "${var:0:2}" == "$input"= ]; then
+                ${var:2}
+            fi
+        done
+    done
+
+    on_exit
+}
+
+kbind_base "$@"
