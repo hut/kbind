@@ -3,7 +3,7 @@
 # This software is distributed under the terms of the GNU GPL version 3.
 
 usage () {
-    echo "usage: kbind <key>=<action>..."
+    echo "usage: kbind [statuscommand] <key>=<action>..."
 }
 
 kbind_base () {
@@ -23,10 +23,23 @@ kbind_base () {
         stty cooked
     }
 
+    # Print something in a specific color
+    color_cmd='echo_color() { color="$1"; shift; printf "\033[1;3${color}m$@\033[00m\n"; };'
+
+    statuscommand="$1"
+    if [ "${statuscommand:1:1}" == "=" ]; then
+        statuscommand=
+    else
+        shift
+    fi
+
     # Print the key bindings
     for var in "$@"; do
         echo $var
     done
+
+    # Run the statuscommand the first time
+    test -n "$statuscommand" && sh -c "$color_cmd $statuscommand"
 
     while true; do
         input="$(getc)"
@@ -38,6 +51,8 @@ kbind_base () {
         for var in "$@"; do
             if [ "${var:0:2}" == "$input"= ]; then
                 ${var:2}
+                test -n "$statuscommand" && sh -c "$color_cmd $statuscommand"
+                break
             fi
         done
     done
