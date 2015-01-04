@@ -48,7 +48,7 @@ kbind_base () {
             break
         fi
 
-        for var in "$@"; do
+        for var in "$@" " =:"; do
             if [ "${var:0:2}" == "$input"= ]; then
                 ${var:2}
                 test -n "$statuscommand" && sh -c "$color_cmd $statuscommand"
