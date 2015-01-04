@@ -10,14 +10,10 @@ kbind_base () {
     # Change the terminal environment
     local stty_orig=`stty -g`
     stty -echo
-    local save_traps="$(trap)"
 
     on_exit () {
         # Restore the terminal
         stty $stty_orig
-
-        # Restore signal handlers
-        eval "$save_traps"
     }
 
     # Get a single character that's typed in by the user
