@@ -48,6 +48,7 @@ kbind_base () {
             break
         fi
 
+        # The " =:" part binds <SPACE> to a no-op.
         for var in "$@" " =:"; do
             if [ "${var:0:2}" == "$input"= ]; then
                 ${var:2}
