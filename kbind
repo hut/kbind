@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Copyright (C) 2015  Roman Zimbelmann <hut@hut.pm>
 # This software is distributed under the terms of the GNU GPL version 3.
 
